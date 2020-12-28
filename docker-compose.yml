@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  prometheus:
+    image: prom/prometheus
+    restart: unless-stopped
+    volumes:
+      - ./data/prometheus/config:/etc/prometheus/
+      - ./data/prometheus/data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    expose:
+      - 9090
+    ports:
+      - 9090:9090
+  
+  hwinfo_exporter:
+    build: hwinfo-exporter/
+    image: adyanth/hwinfo_exporter
+    expose:
+      - 8000
+    ports:
+      - 8000:8000
+    environment:
+      SCRAPE_URL: http://10.10.10.10:5555
+      METRIC_PORT: 8000
+
+  grafana:
+    image: grafana/grafana
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    volumes:
+      - ./data/grafana:/var/lib/grafana
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource,marcusolsson-json-datasource
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
