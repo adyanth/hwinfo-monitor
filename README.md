@@ -10,3 +10,5 @@ git clone https://github.com/adyanth/hwinfo-exporter.git
 cd hwinfo-exporter
 docker-compose up -d
 ```
+
+Open `http://localhost:3000` for grafana and `http://localhost:9090` for prometheus.
